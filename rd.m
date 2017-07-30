@@ -20,7 +20,8 @@ handles.output = hObject;
 guidata(hObject, handles);
 function varargout = rd_OutputFcn(hObject, eventdata, handles) 
 varargout{1} = handles.output;
-% --- Executes on button press in loadImageButton.
+
+%--- this is to load image to both axes...
 function loadImageButton_Callback(hObject, eventdata, handles)
  [filename, pathname] = uigetfile({'*.jpg';'*.bmp'},'File Selector');
  image = strcat(pathname, filename);
@@ -33,13 +34,14 @@ function loadImageButton_Callback(hObject, eventdata, handles)
  imshow(image);
 
 
-% --- Executes on button press in GrayScaleButton.
+% --- this will convert the loaded image to grayscale
 function GrayScaleButton_Callback(hObject, eventdata, handles)
 I = getimage(handles.original);
 g = rgb2gray(I);
 axes(handles.edit);
 imshow(g);
-% --- Executes on button press in EdgesButton.
+
+% --- this will identify the edges based on canny method
 function EdgesButton_Callback(~, eventdata, handles)
 I = getimage(handles.original);
 g = rgb2gray(I);
@@ -74,6 +76,8 @@ for k = 1:length(lines);
        plot(xy(:,1),xy(:,2),'LineWidth',2,'Color','green');
 end 
 
+%--- obtain the threshold for grayscale of loaded image
+%--- this is based on 95 percent concept
 function [threshold] = getThreshold(g)
 n = 256;
 [counts,binlocations] = imhist(g,n);
@@ -96,6 +100,7 @@ while(i < n);
     end   
 end
 
+%--- detect lines 
 function [lines] = getLines(g,threshold)
 np = g >= threshold;
 edges = edge(np,'canny');
@@ -104,8 +109,5 @@ P = houghpeaks(H,5,'threshold',ceil(0.3*max(H(:))));
 lines = houghlines(edges,theta,rho,P,'FillGap',300,'MinLength',20);
 
 
-% --- Executes on button press in detectRoad.
 function detectRoad_Callback(hObject, eventdata, handles)
-% hObject    handle to detectRoad (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+
