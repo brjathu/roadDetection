@@ -73,7 +73,7 @@ axes(handles.edit);
 imshow(I), hold on
 for k = 1:length(lines);
        xy = [lines(k).point1; lines(k).point2];
-       plot(xy(:,1),xy(:,2),'LineWidth',2,'Color','green');
+       plot(xy(:,1),xy(:,2),'LineWidth',1,'Color','green');
 end 
 
 %--- obtain the threshold for grayscale of loaded image
@@ -106,8 +106,21 @@ np = g >= threshold;
 edges = edge(np,'canny');
 [H,theta,rho] = hough(edges);
 P = houghpeaks(H,5,'threshold',ceil(0.3*max(H(:))));
-lines = houghlines(edges,theta,rho,P,'FillGap',300,'MinLength',20);
+lines = houghlines(edges,theta,rho,P,'FillGap',20,'MinLength',1);
 
 
 function detectRoad_Callback(hObject, eventdata, handles)
-
+IMG = getimage(handles.original);
+r = IMG(:,:,1);
+g = IMG(:,:,2);
+b = IMG(:,:,3);
+meanR = mean(r);
+meanG = mean(g);
+meanB = mean(b);
+a = zeros(size(IMG, 1), size(IMG, 2));
+red = cat(3,r,a,a);
+blue = cat(3,a,a,b);
+green = cat(3,a,g,a);
+% red_new = red >= meanR;
+axes(handles.edit);
+imshow(red);
